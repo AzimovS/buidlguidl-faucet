@@ -20,7 +20,7 @@ contract Faucet {
 		_;
 	}
 
-	function withdraw() external {
+	function withdraw(address _to) external {
 		require(
 			msg.sender.balance > 0.2 ether,
 			"Your balance is too high."
@@ -36,8 +36,8 @@ contract Faucet {
 
 		nextAccessTime[msg.sender] = block.timestamp + lockTime;
 
-		payable(msg.sender).transfer(MAX_WITHDRAWAL);
-		emit Withdrawal(msg.sender, MAX_WITHDRAWAL);
+		payable(_to).transfer(MAX_WITHDRAWAL);
+		emit Withdrawal(_to, MAX_WITHDRAWAL);
 	}
 
 	// Fallback function to receive ether
