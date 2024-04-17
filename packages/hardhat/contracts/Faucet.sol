@@ -22,7 +22,7 @@ contract Faucet {
 
 	function withdraw(address _to) external {
 		require(
-			msg.sender.balance > 0.2 ether,
+			_to.balance < 0.2 ether,
 			"Your balance is too high."
 		);
 		require(
