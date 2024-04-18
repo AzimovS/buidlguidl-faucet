@@ -134,7 +134,7 @@ const deployedContracts = {
   },
   11155111: {
     Faucet: {
-      address: "0x01c37C32Bd84A59525a2e6A43b58Bb2E1a2e5495",
+      address: "0x27eD1748B81D6DD0E33d862AaF0E0F0fA64F8ab1",
       abi: [
         {
           inputs: [],
