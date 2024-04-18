@@ -30,11 +30,11 @@ contract Faucet {
 			"Insufficient balance in the faucet."
 		);
 		require(
-			block.timestamp >= nextAccessTime[msg.sender],
+			block.timestamp >= nextAccessTime[_to],
 			"Insufficient time elapsed since last withdrawal - try again later."
 		);
 
-		nextAccessTime[msg.sender] = block.timestamp + lockTime;
+		nextAccessTime[_to] = block.timestamp + lockTime;
 
 		payable(_to).transfer(MAX_WITHDRAWAL);
 		emit Withdrawal(_to, MAX_WITHDRAWAL);

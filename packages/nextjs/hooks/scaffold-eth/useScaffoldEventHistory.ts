@@ -108,7 +108,7 @@ export const useScaffoldEventHistory = <
         setError(undefined);
       }
     } catch (e: any) {
-      console.error(e);
+      // console.error(e);
       setEvents(undefined);
       setError(e);
     } finally {

@@ -25,11 +25,15 @@ const Home: NextPage = () => {
     fromBlock: BigInt(process.env.NEXT_PUBLIC_DEPLOY_BLOCK || "0"),
     watch: true,
   });
-  console.log(withdrawHistory);
+
+  const { data: contractBalance } = useBalance({
+    address: process.env.NEXT_PUBLIC_FAUCET_CONTRACT_ADDRESS,
+    watch: true,
+  });
 
   const isBalanceEligible = userBalance && Number(userBalance.formatted) < 0.2 ? true : false;
 
-  const fundETH = async (address: string) => {
+  const withdrawETH = async (address: string) => {
     try {
       setIsSending(true);
       const data = new FormData();
@@ -60,9 +64,11 @@ const Home: NextPage = () => {
             <span className="block text-2xl mb-2">Welcome to</span>
             <span className="block text-4xl font-bold">BuidlGuidl Sepolia Faucet</span>
           </h1>
-          <div className="flex justify-center items-center space-x-2">
-            <p className="my-2 font-medium">Receive 0.1 ETH per request</p>
-          </div>
+        </div>
+
+        <div className="justify-center">
+          <p className="my-2 font-medium">Current contract balance: {contractBalance?.formatted} ETH</p>
+          <p className="my-2 font-medium">Receive 0.1 ETH per request</p>
         </div>
 
         {connectedAddress ? (
@@ -77,9 +83,12 @@ const Home: NextPage = () => {
                   disabled={true}
                 />
                 <div className="text-right mt-5">
+                  {!isBalanceEligible && (
+                    <p className={`text-left mb-0 text-red-500`}>Your balance should be less than 0.2 ETH</p>
+                  )}
                   <button
                     className="btn btn-secondary btn-sm"
-                    onClick={() => fundETH(connectedAddress)}
+                    onClick={() => withdrawETH(connectedAddress)}
                     disabled={isSending || !isBalanceEligible}
                   >
                     {isSending && <span className="loading loading-spinner loading-xs"></span>}
@@ -88,12 +97,6 @@ const Home: NextPage = () => {
                 </div>
               </div>
             </div>
-            {!isBalanceEligible && (
-              <>
-                <p className="text-center mt-5 mb-0">Eligibility Criteria</p>
-                <p className={`text-left mb-0 text-red-500`}>Your balance should be less than 0.2 ETH</p>
-              </>
-            )}
           </div>
         ) : (
           <ConnectButton />
@@ -105,7 +108,7 @@ const Home: NextPage = () => {
         <ul>
           {withdrawHistory &&
             withdrawHistory.map((transaction, index) => (
-              <li key={index} className="block">
+              <li key={index} className="mt-2">
                 <div className="flex justify-center items-center space-x-2">
                   {formatEther(transaction?.args?.[1]).toString()} ETH was sent to &nbsp;
                   <Address address={transaction?.args?.[0]} />
