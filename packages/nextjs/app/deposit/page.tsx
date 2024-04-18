@@ -3,13 +3,11 @@
 import { useState } from "react";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import type { NextPage } from "next";
-import { formatEther } from "viem";
 import { useAccount, useBalance } from "wagmi";
-import { Address, AddressInput } from "~~/components/scaffold-eth";
-import { useScaffoldEventHistory } from "~~/hooks/scaffold-eth";
+import { AddressInput } from "~~/components/scaffold-eth";
 import { notification } from "~~/utils/scaffold-eth";
 
-const Home: NextPage = () => {
+const Deposit: NextPage = () => {
   const { address: connectedAddress } = useAccount();
   const [isSending, setIsSending] = useState<boolean>(false);
 
@@ -18,16 +16,7 @@ const Home: NextPage = () => {
     watch: true,
   });
 
-  const { data: withdrawHistory } = useScaffoldEventHistory({
-    contractName: "Faucet",
-    eventName: "Withdrawal",
-    blockData: true,
-    fromBlock: BigInt(process.env.NEXT_PUBLIC_DEPLOY_BLOCK || "0"),
-    watch: true,
-  });
-  console.log(withdrawHistory);
-
-  const isBalanceEligible = userBalance && Number(userBalance.formatted) < 0.2 ? true : false;
+  const formattedBalance = userBalance ? Number(userBalance.formatted) : 0;
 
   const fundETH = async (address: string) => {
     try {
@@ -80,7 +69,7 @@ const Home: NextPage = () => {
                   <button
                     className="btn btn-secondary btn-sm"
                     onClick={() => fundETH(connectedAddress)}
-                    disabled={isSending || !isBalanceEligible}
+                    disabled={isSending}
                   >
                     {isSending && <span className="loading loading-spinner loading-xs"></span>}
                     Send 0.1 Sepolia ETH
@@ -88,34 +77,19 @@ const Home: NextPage = () => {
                 </div>
               </div>
             </div>
-            {!isBalanceEligible && (
-              <>
-                <p className="text-center mt-5 mb-0">Eligibility Criteria</p>
-                <p className={`text-left mb-0 text-red-500`}>Your balance should be less than 0.2 ETH</p>
-              </>
+            <p className="text-center mt-10 mb-0">Eligibility Criteria</p>
+            {formattedBalance && (
+              <p className={`text-left mb-0 ${formattedBalance < 0.2 ? "text-green-500" : "text-red-500"}`}>
+                Your current balance is less than 0.2 ETH
+              </p>
             )}
           </div>
         ) : (
           <ConnectButton />
         )}
-
-        <h1 className="text-center mt-10">
-          <span className="block text-2xl mb-2">Withdraw History</span>
-        </h1>
-        <ul>
-          {withdrawHistory &&
-            withdrawHistory.map((transaction, index) => (
-              <li key={index} className="block">
-                <div className="flex justify-center items-center space-x-2">
-                  {formatEther(transaction?.args?.[1]).toString()} ETH was sent to &nbsp;
-                  <Address address={transaction?.args?.[0]} />
-                </div>
-              </li>
-            ))}
-        </ul>
       </div>
     </>
   );
 };
 
-export default Home;
+export default Deposit;
