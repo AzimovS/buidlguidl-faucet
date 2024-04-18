@@ -82,7 +82,7 @@ const Home: NextPage = () => {
         {connectedAddress ? (
           <div className="w-5/12">
             <div className="bg-base-100 rounded-3xl shadow-md shadow-secondary border border-base-300 flex flex-col mt-2 relative">
-              <p className="text-center mb-0">Enter you address</p>
+              <p className="text-center mb-0">Fund the following address</p>
               <div className="p-5">
                 <AddressInput
                   value={connectedAddress ?? ""}
