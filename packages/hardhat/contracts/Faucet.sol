@@ -51,7 +51,7 @@ contract Faucet {
 	}
 
 	// Function to allow the owner to withdraw funds from the contract
-	function withdrawFunds(uint256 _amount) external onlyOwner {
+	function withdrawFunds(uint256 _amount) external {
 		require(
 			address(this).balance >= _amount,
 			"Insufficient balance in the contract."
