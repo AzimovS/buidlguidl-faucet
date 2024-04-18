@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ConnectButton } from "@rainbow-me/rainbowkit";
 import type { NextPage } from "next";
 import { parseEther } from "viem";
@@ -12,6 +12,12 @@ import { notification } from "~~/utils/scaffold-eth";
 const Deposit: NextPage = () => {
   const { address: connectedAddress } = useAccount();
   const [depositValue, setDepositValue] = useState<string>("0");
+
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const { writeAsync: deposit, isLoading: isDepositLoading } = useScaffoldContractWrite({
     contractName: "Faucet",
@@ -41,7 +47,9 @@ const Deposit: NextPage = () => {
         </div>
 
         <div className="justify-center ">
-          <p className="my-2 font-medium">Current contract balance: {contractBalance?.formatted} ETH</p>
+          <p className="my-2 font-medium">
+            {isClient && `Current contract balance: ${contractBalance?.formatted} ETH`}{" "}
+          </p>
           <p className="my-2 font-medium">Here you can deposit to our Faucet</p>
         </div>
 
